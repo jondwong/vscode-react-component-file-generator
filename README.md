@@ -42,6 +42,7 @@ export default ComponentName
 
 ```
 /* component-name.styles.ts */
+
 import styled from 'styled-components'
 
 export const ComponentNameWrapper = styled.div``
