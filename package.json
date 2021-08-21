@@ -3,7 +3,7 @@
     "displayName": "react-component-file-generator",
     "description": "Generates a file directory for new components",
     "version": "0.0.1",
-    "publisher": "JonWong",
+    "publisher": "Jon Wong",
     "engines": {
         "vscode": "^1.58.0"
     },
@@ -12,7 +12,8 @@
     ],
     "activationEvents": [
         "onCommand:react-component-file-generator.newComponent",
-        "onCommand:react-component-file-generator.copyComponent"
+        "onCommand:react-component-file-generator.copyComponent",
+        "onCommand:react-component-file-generator.createComponentFromSelection"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -24,6 +25,10 @@
             {
                 "command": "react-component-file-generator.copyComponent",
                 "title": "React Component File Generator: Copy Component To New Location"
+            },
+            {
+                "command": "react-component-file-generator.createComponentFromSelection",
+                "title": "React Component File Generator: Create Component From Selection"
             }
         ],
         "menus": {
@@ -36,6 +41,13 @@
                     "command": "react-component-file-generator.copyComponent",
                     "title": "Copy Component Directory",
                     "group": "react-component-file-generator"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "react-component-file-generator.createComponentFromSelection",
+                    "group": "react-component-file-generator",
+                    "when": "editorHasSelection && resourceLangId == typescriptreact"
                 }
             ]
         }

@@ -1,10 +1,15 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 
-import { commands, workspace, window, Uri, ExtensionContext } from "vscode";
-import { ReactComponentFileGenerator } from "./react-component-generator";
 import * as fs from "fs";
 import * as path from "path";
+import { commands, workspace, window, Uri, ExtensionContext } from "vscode";
+import { VSCodeWindow } from "./vscode.interfaces";
+import {
+    ReactComponentFileGenerator,
+    CreateFromSelectionGenerator,
+    CopyComponentGenerator,
+} from "./generators";
 
 export const getWorkspaceFolder = (folders: any): string => {
     if (!folders) {
@@ -21,7 +26,18 @@ export function activate(context: ExtensionContext) {
     const workspaceRoot: string = getWorkspaceFolder(
         workspace.workspaceFolders
     );
+
+    //@ts-ignore
     const generator = new ReactComponentFileGenerator(workspaceRoot, window);
+    //@ts-ignore
+    const createFromSelectionGenerator = new CreateFromSelectionGenerator(
+        workspaceRoot,
+        window as VSCodeWindow
+    );
+    const copyComponentGenerator = new CopyComponentGenerator(
+        workspaceRoot,
+        window as VSCodeWindow
+    );
 
     let disposable = commands.registerCommand(
         "react-component-file-generator.newComponent",
@@ -37,20 +53,30 @@ export function activate(context: ExtensionContext) {
         }
     );
 
-    context.subscriptions.push(disposable);
-
     let copyDisposable = commands.registerCommand(
         "react-component-file-generator.copyComponent",
         (resource: Uri) => {
             if (resource) {
-                generator.executeCopyComponent({ sourcePath: resource.path });
+                copyComponentGenerator.execute({
+                    sourcePath: resource.path,
+                });
             }
+        }
+    );
+
+    let createFromSelectionDisposable = commands.registerCommand(
+        "react-component-file-generator.createComponentFromSelection",
+        (resource: Uri) => {
+            createFromSelectionGenerator.execute();
         }
     );
 
     context.subscriptions.push(disposable);
     context.subscriptions.push(copyDisposable);
+    context.subscriptions.push(createFromSelectionDisposable);
     context.subscriptions.push(generator);
+    context.subscriptions.push(createFromSelectionGenerator);
+    context.subscriptions.push(copyComponentGenerator);
 }
 
 // this method is called when your extension is deactivated
