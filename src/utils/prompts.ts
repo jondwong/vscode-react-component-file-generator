@@ -10,10 +10,14 @@ const promptForComponentName = async (window: VSCodeWindow) => {
     });
 };
 
-const promptForDestinationPath = async (window: VSCodeWindow) => {
+const promptForDestinationPath = async (
+    window: VSCodeWindow,
+    prompt?: string
+) => {
     return await _launchPrompt(window, {
         ignoreFocusOut: true,
-        prompt: `Enter the parent path relative to your workspace root`,
+        prompt:
+            prompt || `Enter the parent path relative to your workspace root`,
         placeHolder: "path/to/your/file , i.e. src/components",
         validateInput: (input: string) => null,
     });

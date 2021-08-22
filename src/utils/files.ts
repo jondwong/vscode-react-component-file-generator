@@ -126,6 +126,10 @@ const createDirectoryForComponent = (
     return dirPath;
 };
 
+const appendToFile = (filePath: string, content: string) => {
+    fs.appendFileSync(filePath, content);
+};
+
 const getFileNamesInDir = (dirPath: string) => {
     return fs.readdirSync(dirPath);
 };
@@ -147,4 +151,5 @@ export default {
     createDirectoryForComponent,
     getFileNamesInDir,
     getFileContent,
+    appendToFile,
 };

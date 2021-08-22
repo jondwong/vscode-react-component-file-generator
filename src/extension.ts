@@ -9,6 +9,7 @@ import {
     ReactComponentFileGenerator,
     CreateFromSelectionGenerator,
     CopyComponentGenerator,
+    CreateStyledComponentGenerator,
 } from "./generators";
 
 export const getWorkspaceFolder = (folders: any): string => {
@@ -35,6 +36,11 @@ export function activate(context: ExtensionContext) {
         window as VSCodeWindow
     );
     const copyComponentGenerator = new CopyComponentGenerator(
+        workspaceRoot,
+        window as VSCodeWindow
+    );
+
+    const createStyledComponentGenerator = new CreateStyledComponentGenerator(
         workspaceRoot,
         window as VSCodeWindow
     );
@@ -71,12 +77,21 @@ export function activate(context: ExtensionContext) {
         }
     );
 
+    let createStyledComponentDisposable = commands.registerCommand(
+        "react-component-file-generator.createStyledComponentFromSelection",
+        () => {
+            createStyledComponentGenerator.execute();
+        }
+    );
+
     context.subscriptions.push(disposable);
     context.subscriptions.push(copyDisposable);
     context.subscriptions.push(createFromSelectionDisposable);
+    context.subscriptions.push(createStyledComponentDisposable);
     context.subscriptions.push(generator);
     context.subscriptions.push(createFromSelectionGenerator);
     context.subscriptions.push(copyComponentGenerator);
+    context.subscriptions.push(createStyledComponentGenerator);
 }
 
 // this method is called when your extension is deactivated

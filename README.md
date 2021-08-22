@@ -62,3 +62,17 @@ export {default} from './component-name'
 -   Via Right Click in the File Navigator on existing component
 
 Executing this assumes a directory containing a component, and will try to copy and convert everything to kebab-cased file names, as will as create an index.ts file in the location you supply.
+
+### Create Component from Selection
+
+##### Supported Execution Methods
+
+-   Via right click with selected JSX
+
+Executing this will create a new component folder structure, and place the selected jsx into the body of the new component. It will do it's best to add the appropriate imports, as well as copy over selected styled components from the source styles file into the new components file.
+
+### Create Styled Component From Selection
+
+-   Via right click with selected JSX
+
+Executing this will add a styled div component in the current component directory styles file with the name of the selected text.

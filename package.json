@@ -3,7 +3,7 @@
     "displayName": "react-component-file-generator",
     "description": "Generates a file directory for new components",
     "version": "0.0.1",
-    "publisher": "Jon Wong",
+    "publisher": "JonWong",
     "engines": {
         "vscode": "^1.58.0"
     },
@@ -13,7 +13,8 @@
     "activationEvents": [
         "onCommand:react-component-file-generator.newComponent",
         "onCommand:react-component-file-generator.copyComponent",
-        "onCommand:react-component-file-generator.createComponentFromSelection"
+        "onCommand:react-component-file-generator.createComponentFromSelection",
+        "onCommand:react-component-file-generator.createStyledComponentFromSelection"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -29,6 +30,10 @@
             {
                 "command": "react-component-file-generator.createComponentFromSelection",
                 "title": "React Component File Generator: Create Component From Selection"
+            },
+            {
+                "command": "react-component-file-generator.createStyledComponentFromSelection",
+                "title": "React Component File Generator: Create Styled Component From Selection"
             }
         ],
         "menus": {
@@ -46,6 +51,11 @@
             "editor/context": [
                 {
                     "command": "react-component-file-generator.createComponentFromSelection",
+                    "group": "react-component-file-generator",
+                    "when": "editorHasSelection && resourceLangId == typescriptreact"
+                },
+                {
+                    "command": "react-component-file-generator.createStyledComponentFromSelection",
                     "group": "react-component-file-generator",
                     "when": "editorHasSelection && resourceLangId == typescriptreact"
                 }
