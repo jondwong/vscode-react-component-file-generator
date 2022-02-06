@@ -22,7 +22,6 @@ export default class CreateStyledComponentGenerator implements IDisposable {
         );
 
         let match = JSX_COMPONENT_REGEX.exec(selectedText);
-        console.log(match);
         if (match) {
             if (match.groups && match.groups!.el) {
                 let content =

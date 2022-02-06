@@ -83,6 +83,7 @@ export function activate(context: ExtensionContext) {
             createStyledComponentGenerator.execute();
         }
     );
+    
 
     context.subscriptions.push(disposable);
     context.subscriptions.push(copyDisposable);

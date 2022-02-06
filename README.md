@@ -11,6 +11,12 @@ Executing will result in the creation of a directory with the following structur
 |      | - index.ts
 ```
 
+## Building
+
+1. Git clone this repo.
+2. Execute `npx vsce package` to generate a VSIX file
+3. On the extensions tab in VSCode, select the option "Install from VSIX..." and select the file.
+
 ## Usage
 
 ### Generate New Component

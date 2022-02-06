@@ -4,6 +4,7 @@ import { ModuleImport } from "../types";
 import { IDisposable, VSCodeWindow } from "../vscode.interfaces";
 import Prompts from "../utils/prompts";
 import FileUtil from "../utils/files";
+import StyleFormat from "../style_format";
 
 const JSX_COMPONENT_REGEX = /<(?<styles>Styles\.)?(?<el>[A-Z][A-Za-z]*).*/;
 const FILE_IMPORT_STATEMENT_REGEX = /(import (.*) from [\'|\"](.*)[\'|\"])/gi;
@@ -61,10 +62,12 @@ export default class CreateFromSelectionGenerator implements IDisposable {
             FileUtil.createComponentFile(dirPath, componentName!, {
                 imports,
                 body: selection,
+                styleFormat: StyleFormat.STYLED_COMPONENT
             });
 
             FileUtil.createStylesFile(dirPath, componentName!, {
                 additionalComponents: styledComponentsInComponent,
+                styleFormat: StyleFormat.STYLED_COMPONENT
             });
             FileUtil.createIndexFile(dirPath, componentName!);
             this.window.showInformationMessage(

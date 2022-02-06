@@ -1,11 +1,17 @@
 import * as path from "path";
 import * as fs from "fs";
-import { COMPONENT_FILE, INDEX_FILE, STYLES_FILE } from "../templates";
+import { COMPONENT_FILE, INDEX_FILE, STYLED_COMPONENT_STYLE_FILE, SCSS_STYLE_FILE } from "../templates";
 import { ModuleImport } from "../types";
 import * as Handlebars from "handlebars";
+import StyleFormat from "../style_format";
+
 
 Handlebars.registerHelper("encodeMyString", function (inputData) {
     return new Handlebars.SafeString(inputData);
+});
+
+Handlebars.registerHelper("uncapitalize", function (inputData) {
+    return uncapitalize(inputData);
 });
 
 export const isDirectory = (path: string): boolean => {
@@ -36,6 +42,7 @@ const createComponentFile = (
     options: {
         imports?: ModuleImport[];
         body?: string;
+        styleFormat: StyleFormat
     }
 ) => {
     const template = Handlebars.compile(COMPONENT_FILE);
@@ -63,7 +70,13 @@ const createComponentFile = (
           })
         : [];
 
+    let styleImportStatement = options.styleFormat == StyleFormat.STYLED_COMPONENT ? `import * as Styles from "./${toKebabCase(componentName)}.styles"` : `import './${toKebabCase(componentName)}.scss'`;
+    let baseComponentOpenTag = options.styleFormat == StyleFormat.STYLED_COMPONENT ? `Styles.${componentName}Wrapper` : `div className="${uncapitalize(componentName)}"`;
+    let baseComponentCloseTag = options.styleFormat == StyleFormat.STYLED_COMPONENT ? `Styles.${componentName}Wrapper` : `div`;
     let args = {
+        styleImportStatement,
+        baseComponentOpenTag,
+        baseComponentCloseTag,
         componentName,
         fileName: toKebabCase(componentName),
         imports: importsText,
@@ -72,24 +85,36 @@ const createComponentFile = (
     _createFile(filePath, template(args));
 };
 
+const uncapitalize = (input:string) => {
+    if(!input) {return input;};
+    return input.charAt(0).toLowerCase() + input.slice(1);
+};
+
+const capitalize = (input:string) => {
+    if(!input) {return input;}
+    return input.charAt(0).toUpperCase() + input.slice(1);
+};
+
 const createStylesFile = (
     parentPath: string,
     componentName: string,
-    options?: { additionalComponents?: string[] }
+    options?: { additionalComponents?: string[], styleFormat?:StyleFormat }
 ) => {
     let fileName = toKebabCase(componentName);
-    let filePath = path.join(parentPath, `${fileName}.styles.ts`);
+    
 
-    if (exists(filePath)) {
-        throw `Path for styles file already exists as ${filePath}`;
+    if(!options || !("styleFormat" in options) || options.styleFormat == StyleFormat.STYLED_COMPONENT) {
+        const template = Handlebars.compile(STYLED_COMPONENT_STYLE_FILE);
+        let args = {
+            componentName,
+            additionalComponents: options ? options.additionalComponents || [] : [],
+        };
+    
+        _createFile(path.join(parentPath, `${fileName}.styles.ts`), template(args));
+    } else {
+        const template = Handlebars.compile(SCSS_STYLE_FILE);
+        _createFile(path.join(parentPath, `${fileName}.scss`), template({componentName}));
     }
-    const template = Handlebars.compile(STYLES_FILE);
-    let args = {
-        componentName,
-        additionalComponents: options ? options.additionalComponents || [] : [],
-    };
-    console.log(args);
-    _createFile(filePath, template(args));
 };
 
 const createIndexFile = (parentPath: string, componentName: string) => {
@@ -106,10 +131,12 @@ const createIndexFile = (parentPath: string, componentName: string) => {
 
 const createComponentFilesAtPath = (
     destinationDirectoryPath: string,
-    componentName: string
+    componentName: string,
+    styleFormat: StyleFormat
 ) => {
-    createComponentFile(destinationDirectoryPath, componentName, {});
-    createStylesFile(destinationDirectoryPath, componentName);
+    componentName = capitalize(componentName);
+    createComponentFile(destinationDirectoryPath, componentName, { styleFormat});
+    createStylesFile(destinationDirectoryPath, componentName, {styleFormat});
     createIndexFile(destinationDirectoryPath, componentName);
 };
 
@@ -133,10 +160,15 @@ const appendToFile = (filePath: string, content: string) => {
 const getFileNamesInDir = (dirPath: string) => {
     return fs.readdirSync(dirPath);
 };
+
 const _anyExist = (filePaths: string[]): boolean => {
     return filePaths.every((fp: string) => exists(fp));
 };
+
 const _createFile = (path: string, fileContent: string) => {
+    if (exists(path)) {
+        throw `Path for file already exists as ${path}`;
+    }
     return fs.writeFileSync(path, fileContent);
 };
 

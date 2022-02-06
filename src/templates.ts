@@ -1,5 +1,6 @@
 export const COMPONENT_FILE = `import React from 'react'
-import * as Styles from './{{fileName}}.styles'
+{{encodeMyString styleImportStatement}}
+
 {{#each imports}}
 {{encodeMyString this}}
 {{/each}}
@@ -8,16 +9,16 @@ interface {{componentName}}Props {}
 
 const {{componentName}} = (props:{{componentName}}Props) => {
     return (
-        <Styles.{{componentName}}Wrapper>
+        <{{encodeMyString baseComponentOpenTag}}>
             {{ encodeMyString componentBody}}
-        </Styles.{{componentName}}Wrapper>
+        </{{baseComponentCloseTag}}>
     )
 }
 
 export default {{componentName}}
 `;
 
-export const STYLES_FILE = `import styled from 'styled-components'
+export const STYLED_COMPONENT_STYLE_FILE = `import styled from 'styled-components'
 
 export const {{componentName}}Wrapper = styled.div\`\`;
 
@@ -25,5 +26,15 @@ export const {{componentName}}Wrapper = styled.div\`\`;
 {{encodeMyString this}}
 {{/each}}
 `;
+
+export const SCSS_STYLE_FILE = `
+
+.{{uncapitalize componentName}} {
+    box-sizing: border-box;
+}
+
+`;
+
+
 
 export const INDEX_FILE = `export {default} from './{{fileName}}'`;
